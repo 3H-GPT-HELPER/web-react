@@ -9,6 +9,11 @@ import styled from 'styled-components';
 import MainPage from './component/page/MainPage';
 import CategoryPage from './component/page/CategoryPage';
 import DetailPage from './component/page/DetailPage';
+import SignupPage from './component/page/user/SignupPage';
+import LoginPage from './component/page/user/LoginPage';
+import { useEffect } from 'react';
+import LogoutPage from './component/page/user/LogoutPage';
+
 
 const MainTitleText=styled.p`
   font-size:24px;
@@ -22,6 +27,10 @@ function App() {
       <MainTitleText>welcome to chat-gpt study helper</MainTitleText>
       <Routes>
         <Route index element={<MainPage></MainPage>}></Route>
+        <Route path="/signup" element={<SignupPage></SignupPage>}></Route>
+        <Route path="/login" element={<LoginPage></LoginPage>}></Route>
+        <Route path="/logout" element={<LogoutPage></LogoutPage>}></Route>
+
         <Route path="/category" element={<CategoryPage></CategoryPage>}></Route>
         <Route path="/category/:main_category/:sub_category" element={<DetailPage></DetailPage>}></Route>
         

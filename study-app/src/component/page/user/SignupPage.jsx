@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const Server_URL = "http://localhost:3002";
 
-const LoginPage=()=>{
+const SignupPage=()=>{
     const [id,setId]=useState("");
     const [password,setPassword]=useState("");
     
-    const LoginBtn=async()=>{
+    const submitBtn=async()=>{
         console.log(id,password);
         if(id==="" || password===""){
             alert("아이디 또는 비밀번호가 입력되지 않았습니다!");
@@ -15,7 +15,7 @@ const LoginPage=()=>{
         }else{
            
             try{
-                fetch(Server_URL+"/login", {
+                fetch(Server_URL+"/signup", {
                     method: "post",
                     headers: {
                         "Content-Type": "application/json",
@@ -25,14 +25,7 @@ const LoginPage=()=>{
                         userPw: password,
                       }),
                   })
-                    .then((res) => {
-                        res.json();
-                        localStorage.clear()
-                        localStorage.setItem('id',id)
-                        localStorage.setItem('token',res.token);
-                        window.location.replace('http://localhost:3000/category')
-
-                    })
+                    .then((res) => res.json())
                     .then((json) => {      
                         console.log(json);     
                         
@@ -41,7 +34,24 @@ const LoginPage=()=>{
                         console.error("error:",error);
                     });
 
-                
+                // const res=fetch(BASE_URL+'/signup',{
+                //     method:'POST',
+                //     body:JSON.stringify(userData),
+                //     //credentials:'include',
+                //     headers:{'Content-Type': 'application/json'},
+                // });
+
+                // const data=res.json();
+                // alert(data);
+                // if(res.status===200){
+                //     alert(data);
+                //     setId(id);
+                //     setPassword(password);
+                // }else{
+                //     setId("");
+                //     setPassword("")
+                //     return ;
+                // }
             }catch(err){
                 console.log(err);
             }
@@ -51,14 +61,14 @@ const LoginPage=()=>{
 
     return(
         <div>
-            <h1>로그인</h1>
+            <h1>회원가입</h1>
             <div>
                 <input type="text" value={id} onChange={(e)=>setId(e.target.value)}></input>
                 <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)}></input>
-                <button type="submit" onClick={LoginBtn}>submit</button>
+                <button type="submit" onClick={submitBtn}>submit</button>
             </div>
         </div>
     );
 }
 
-export default LoginPage;
+export default SignupPage;

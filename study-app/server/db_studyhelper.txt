@@ -1,0 +1,51 @@
+CREATE TABLE User(
+    `useId` varchar(15) NOT NULL,
+    `name` varchar(10) NOT NULL,
+    `email` varchar(20) NOT NULL,
+    `password` varchar(30) NOT NULL,
+    PRIMARY KEY (`useId`)
+);
+
+CREATE TABLE UserCategory(
+    id` int auto_increment NOT NULL,
+    `name` varchar(15) NOT NULL,
+    `userId` varchar(15) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `userId_idx` (`userId`),
+    KEY `name_idx` (`name`),
+    FOREIGN KEY (`userId`) REFERENCES `User` (`userId`)
+);
+
+CREATE TABLE SubCategory(
+    `id` int auto_increment NOT NULL,
+    `main_category` varchar(15) NOT NULL,
+    `name` varchar(15) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `main_idx` (`main_category`),
+    KEY `name_indx` (`name`),
+    FOREIGN KEY (`main_category`) REFERENCES `UserCategory` (`name`)
+);
+
+CREATE TABLE Content(
+    id int auto_increment not null,
+    useId varchar(15) not null,
+    question longtext not null,
+    answer longtext not null,
+    main_category varchar(15) not null,
+    sub_category1 varchar(15),
+    sub_category2 varchar(15),
+
+    KEY `userId_idx` (`userId`),
+    KEY `main_idx` (`main_category`),
+    KEY `sub1_idx` (`sub_category1`),
+    KEY `sub2_idx` (`sub_category2`),
+
+    primary key(id),
+    foreign key(main_category) REFERENCES UserCategory(name),
+    foreign key(useId) REFERENCES User(userId),
+
+);
+
+ALTER TABLE UserCategory,Content,SubCategory auto_increment=1;
+
+
