@@ -2,8 +2,7 @@ import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 import {useState,useEffect} from "react";
 import Card from "../ui/Card";
-
-const BASE_URL = "http://localhost:3001";
+const Server_URL = "http://localhost:3002";
 
 const Wrapper=styled.div`
     width:calc(100%-32px);
@@ -28,12 +27,33 @@ const Container=styled.div`
 
 function MainPage(props){
     const navigate=useNavigate();
-    const [isLogin,setIsLogin]=useState(false);
+    const [isLoggedIn,setIsLoggedIn]=useState(false);
 
     useEffect(()=>{
-        if(localStorage.getItem('token')!==null){
-            setIsLogin(true);
-        }
+        // if(localStorage.getItem('token')!==null){
+        //     setIsLogin(true);
+        // }
+        //
+        const checkLoginStatus=async()=>{
+            try{
+              const response=await fetch(Server_URL+"/checkLoginStatus",{
+                method:"GET",
+                headers:{ 
+                    "Content-Type": "application/json",
+                    Authorization:localStorage.getItem("token")}
+                
+              })
+              const data=await response.json();
+              console.log(data.isloggedIn);
+              setIsLoggedIn(data.isLoggedIn);
+           
+              }catch(err){
+                console.log('login status check',err);
+              };
+            };
+            //component mount시
+            checkLoginStatus();
+        //
   
     },[]);
 
@@ -51,7 +71,7 @@ function MainPage(props){
                 onClick={(item)=>{navigate("/signup");}}
                 >
                 </Card>
-                {isLogin?
+                {isLoggedIn?
                 <Card
                 title="Logout"
                 onClick={(item)=>{navigate("/logout");}}

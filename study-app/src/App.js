@@ -13,6 +13,8 @@ import SignupPage from './component/page/user/SignupPage';
 import LoginPage from './component/page/user/LoginPage';
 import { useEffect } from 'react';
 import LogoutPage from './component/page/user/LogoutPage';
+import {useState} from "react"; 
+const Server_URL = "http://localhost:3002";
 
 
 const MainTitleText=styled.p`
@@ -22,6 +24,7 @@ const MainTitleText=styled.p`
 `;
 
 function App() {
+  
   return (
     <BrowserRouter>
       <MainTitleText>welcome to chat-gpt study helper</MainTitleText>

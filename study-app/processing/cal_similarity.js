@@ -7,6 +7,7 @@ function cal_similarity(answer,userCategories,userContents){
         return {'new':answer};
     }
 
+    //js변환 모델을 수정해서 넣기
     scores=ModelConfig.test_model.similarity(answer,userCategories);
     console.log("Scores:",scores);
 

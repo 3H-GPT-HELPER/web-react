@@ -1,3 +1,4 @@
+
 const express = require("express"); // npm i express | yarn add express
 const cors    = require("cors");    // npm i cors | yarn add cors
 const mysql   = require("mysql2");   // npm i mysql | yarn add mysql
@@ -11,6 +12,9 @@ const SECRET_KEY='MY-SECRET-KEY';
 const bcrypt=require('bcrypt');
 const db=require('./server/db');
 
+let usersLoginStatus={};
+
+let temp_userId="";
 
 app.use(cors({
     origin:'*',
@@ -40,6 +44,26 @@ const checkId=(userId)=>{
     });
    
 };
+
+const createToken=(userId)=>{
+    //token
+    const date=new Date();
+    const day=String(date.getDay()).padStart(2,"0");
+    const hour=String(date.getHours()).padStart(2,"0");
+    const minutes=String(date.getMinutes()).padStart(2,"0");
+    const today=(day+hour+minutes);
+    
+    const token=jwt.sign({
+        type:'JWT',
+        user:userId,
+    },SECRET_KEY,{
+        expiresIn:'15m',
+        issuer:today,
+    });
+
+    return token;
+
+}
 
 app.post("/signup",async(req,res)=>{
     res.header("Access-Control-Allow-Origin", "*");
@@ -88,40 +112,54 @@ app.post("/login",async(req,res)=>{
             return;
         }
 
-        //token
-        const date=new Date();
-        const day=String(date.getDay()).padStart(2,"0");
-        const hour=String(date.getHours()).padStart(2,"0");
-        const minutes=String(date.getMinutes()).padStart(2,"0");
-        const today=(day+hour+minutes);
-        
-        const token=jwt.sign({
-            type:'JWT',
-            userId:userId,
-        },SECRET_KEY,{
-            expiresIn:'15m',
-            issuer:today,
-        }
-        );
-        res.status(200).json({
-            message:'로그인 성공',
+        const token=createToken(userId);
+
+        res.json({
+            message:"로그인 성공",
             token:token
         });
+
+        usersLoginStatus[userId]=true;
+
 
     }catch(err){
         console.error(err);
         res.status(500).json(err);
     }
-})
+});
 //chrome extension connection
 
 //site login 여부 확인
+const authenticateToken=(req,res,next)=>{
+    const token=req.header('Authorization');
+    if(!token) return res.status(401).json({error:'인증 실패'})
+    
+    jwt.verify(token,SECRET_KEY,(err,user)=>{
+        if(err) return res.status(403).json({error:'토큰 만료'});
+        req.user=user;
+        next();
+        
+        usersLoginStatus[`${req.user.user}`]=true;
+        temp_userId=req.user.user;
+        
+    });
+   
+
+};
+
+app.get('/checkLoginStatus',authenticateToken,(req,res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    const token=req.header('Authorization');
+    console.log("token??",token);
+    
+    res.json({isloggedIn:true});
+});
 app.get("/proxy",(req,res)=>{
     res.header("Access-Control-Allow-Origin", "*");
     
-    if(localStorage.getItem('token')!==null){
-        var userId=localStorage.getItem('id')
-        res.json({userId:userId,authenticated:'True'})
+    if(usersLoginStatus[temp_userId]==true){
+        console.log("temp:",temp_userId);
+        res.json({username:temp_userId,authenticated:'True'})
     }
     else{
         res.json({authenticated:'False'})
@@ -132,12 +170,40 @@ app.get("/proxy",(req,res)=>{
 //get data from chrome extension 
 app.post("/proxy",(req,res)=>{
     res.header("Access-Control-Allow-Origin", "*");
-    console.log(req.body);
+    
+    try{
+        const {question,answer}=req.body;
+    
+    //preprocessing, topic filtering 추가
+    const main_category="test_main"
+    const sub_category1="test_sub1"
+    const sub_category2="test_sub2"
 
-    const {question,answer}=req.body;
-    console.log("proxy:",question,answer);
+    //UserCategory생성, SubCategory, Content순으로 넣기
+
+    //db로 저장
+    const query="INSERT INTO CONTENT (userId,question,answer,main_category,sub_category1,sub_category2) VALUES(?,?,?,?,?,?);"
+
+
+    db.query(query,[temp_userId,question,answer,main_category,sub_category1,sub_category2],(err,result)=>{
+        if(err){
+            res.status(500).send(err);
+        }else{
+            res.status(200).json("답변 서버 저장 완료!");
+            console.log("!");
+        }
+    });
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json(err);
+
+    }
+
    
 });
+//사용자의 main_category가져오는 api
+//사용자가 클릭한 main catogory에 속하는 sub category 가져오는 api
 
 //get 잘되는지 test용 추후에 지우기
 app.get("/api/user",(req,res)=>{

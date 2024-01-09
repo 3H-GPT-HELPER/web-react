@@ -25,17 +25,17 @@ const LoginPage=()=>{
                         userPw: password,
                       }),
                   })
-                    .then((res) => {
-                        res.json();
+                    .then((res) => 
+                        res.json()
+
+                    )
+                    .then((json) => {
+                        console.log(json.message);
                         localStorage.clear()
                         localStorage.setItem('id',id)
-                        localStorage.setItem('token',res.token);
-                        window.location.replace('http://localhost:3000/category')
-
-                    })
-                    .then((json) => {      
-                        console.log(json);     
-                        
+                        localStorage.setItem('token',json.token);
+                        //window.location.replace('http://localhost:3000/category')
+     
                     })
                     .catch((error)=>{
                         console.error("error:",error);

@@ -7,7 +7,7 @@ CREATE TABLE User(
 );
 
 CREATE TABLE UserCategory(
-    id` int auto_increment NOT NULL,
+    `id` int auto_increment NOT NULL,
     `name` varchar(15) NOT NULL,
     `userId` varchar(15) NOT NULL,
     PRIMARY KEY (`id`),
@@ -28,7 +28,7 @@ CREATE TABLE SubCategory(
 
 CREATE TABLE Content(
     id int auto_increment not null,
-    useId varchar(15) not null,
+    userId varchar(15) not null,
     question longtext not null,
     answer longtext not null,
     main_category varchar(15) not null,
@@ -42,7 +42,7 @@ CREATE TABLE Content(
 
     primary key(id),
     foreign key(main_category) REFERENCES UserCategory(name),
-    foreign key(useId) REFERENCES User(userId),
+    foreign key(userId) REFERENCES User(userId)
 
 );
 

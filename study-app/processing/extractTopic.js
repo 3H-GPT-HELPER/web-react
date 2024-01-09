@@ -58,6 +58,6 @@ function getTopics(components, featureNames, n = 3) {
 }
 
 // 예시 데이터로 토픽 추출 테스트
-const exampleAnswer = "This is an example answer with some keywords.";
+const exampleAnswer = "In computing, a network refers to a collection of interconnected devices and systems that can communicate and share resources with each other. The purpose of a network is to enable the exchange of data and information between connected devices, allowing them to work together and share resources efficiently. Networks can be categorized based on their geographical scope and the technologies they use. Here are some key concepts related to networks:";
 const extractedTopic = extractTopic(exampleAnswer);
 console.log('Extracted Topic:', extractedTopic);
