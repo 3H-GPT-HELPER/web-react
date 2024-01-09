@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import data from "../../data.json"
 import MainCategoryBox from "../container/MainCategoryBox";
+import {useState} from "react";
+const Server_URL = "http://localhost:3002";
 
 const Wrapper=styled.div`
     width:calc(100%-32px);
@@ -41,7 +43,38 @@ const AnswerText=styled.p`
 //category page에 main과 sub category 상태를 useState로 업데이트 한후 다 선택되면
 //다음 detail page로 넘어가며 그때 렌더링
 function CategoryPage(props){
+    const [mains,setMains]=useState([]);
+    
+    const getMainCategory=async()=>{
+        try{
+            const res=await fetch(Server_URL+'/getMainCategory',{
+                method:"GET",
+                headers:{
+                    "Content-Type":"application/json",
+                    Authorization:localStorage.getItem("token")
+                }
+            })
+            const datas=await res.json();
+            // const categories=[];
+            // datas.forEach((item)=>{
+            //     categories.append(item['name']);
+            // })
+            // console.log(categories);
+            // const categories=data.mainCategories;
+            //setMains((prevMains) => [...prevMains, ...datas]);
+            setMains(datas);
+        
+        }catch(err){
+            console.log('main category get err:',err);
+        };
+    };
 
+    if(mains.length==0){
+        getMainCategory();
+
+    }
+
+    
       // //for test
     const userId="ohbom"
     const user_contents = data.filter((item) => item.userId === userId);
@@ -49,14 +82,23 @@ function CategoryPage(props){
     return(
         <Wrapper>
             <Container>
-                {user_contents.map((content)=>(
+
+                {/* {user_contents.map((content)=>(
                     <MainCategoryBox
                     key={content.main_category.id}
                     main_category={content.main_category}
                     >
                     </MainCategoryBox>
+                ))} */}
+
+                {mains.map((content)=>(
+                    <MainCategoryBox
+                    key={content.id}
+                    main_category={content.name}
+                    >
+                    </MainCategoryBox>
                 ))}
-                
+
 
             </Container>
         </Wrapper>

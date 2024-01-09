@@ -45,8 +45,8 @@ function SubCategoryBox(props){
 
         <Wrapper>
             {props.subs.map((item)=>(
-            <StyledCard key={item} onClick={()=>selectSubCategory(item)}>
-            {item||"card"}
+            <StyledCard key={item.id} onClick={()=>selectSubCategory(item.name)}>
+            {item.name||"card"}
             </StyledCard>
         ))}
         </Wrapper>

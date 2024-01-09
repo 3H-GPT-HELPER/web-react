@@ -130,6 +130,7 @@ app.post("/login",async(req,res)=>{
 //chrome extension connection
 
 //site login 여부 확인
+//middle ware
 const authenticateToken=(req,res,next)=>{
     const token=req.header('Authorization');
     if(!token) return res.status(401).json({error:'인증 실패'})
@@ -150,7 +151,7 @@ const authenticateToken=(req,res,next)=>{
 app.get('/checkLoginStatus',authenticateToken,(req,res)=>{
     res.header("Access-Control-Allow-Origin", "*");
     const token=req.header('Authorization');
-    console.log("token??",token);
+    //console.log("token??",token);
     
     res.json({isloggedIn:true});
 });
@@ -203,7 +204,65 @@ app.post("/proxy",(req,res)=>{
    
 });
 //사용자의 main_category가져오는 api
+app.get("/getMainCategory",authenticateToken,(req,res)=>{
+    //cors 에러 사전 차단
+    res.header("Access-Control-Allow-Origin", "*");
+    const userId=req.user.user;
+
+    const query="SELECT * FROM Usercategory where userId=?;"
+
+    db.query(query,[userId],(err,result)=>{
+        if(err){
+            res.status(500).send(err);
+        }else{
+            res.status(200).json(result);
+            // console.log(result);
+            // res.send(result);
+        }
+    })
+    
+})
 //사용자가 클릭한 main catogory에 속하는 sub category 가져오는 api
+app.post("/getSubCategory",(req,res)=>{
+    //cors 에러 사전 차단
+    res.header("Access-Control-Allow-Origin", "*");
+    const main=req.body.main;
+    console.log("main cate",main);
+
+    const query="SELECT * FROM Subcategory where main_category=?;"
+
+    db.query(query,[main],(err,result)=>{
+        if(err){
+            res.status(500).send(err);
+        }else{
+            res.status(200).json(result);
+            // console.log(result);
+            // res.send(result);
+        }
+    })
+    
+})
+
+//마지막 content detail 가져오는 api
+app.post("/getContent",(req,res)=>{
+    //cors 에러 사전 차단
+    res.header("Access-Control-Allow-Origin", "*");
+    const main=req.body.main;
+    const sub=req.body.sub;
+
+    const query="SELECT * FROM Content where main_category=? and sub_category1=?;"
+
+    db.query(query,[main,sub],(err,result)=>{
+        if(err){
+            res.status(500).send(err);
+        }else{
+            res.status(200).json(result);
+            // console.log(result);
+            // res.send(result);
+        }
+    })
+    
+})
 
 //get 잘되는지 test용 추후에 지우기
 app.get("/api/user",(req,res)=>{

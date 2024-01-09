@@ -3,6 +3,8 @@ import styled from "styled-components";
 import data from "../../data.json"
 import SubCategoryBox from "./SubCategoryBox";
 
+const Server_URL = "http://localhost:3002";
+
 const Wrapper=styled.div`
     width:calc(100%-32px);
     padding:16px;
@@ -61,15 +63,44 @@ function MainCategoryBox(props){
     const [isClicked,setIsClicked]=useState(false);
 
     const [subs,setSubs]=useState([]);
+
+    const getSubCategory=async()=>{
+        try{
+            const res=await fetch(Server_URL+'/getSubCategory',{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    //Authorization:localStorage.getItem("token"),
+                },
+                body: JSON.stringify({
+                    main: props.main_category
+                })
+            })
+            const datas=await res.json();
+            // const categories=[];
+            // datas.forEach((item)=>{
+            //     categories.append(item['name']);
+            // })
+            // console.log(categories);
+            // const categories=data.mainCategories;
+            //setMains((prevMains) => [...prevMains, ...datas]);
+            setSubs(datas);
+            console.log(datas);
+            console.log(subs);
+        
+        }catch(err){
+            console.log('main category get err:',err);
+        };
+    };
+
     
     const selectMainCategory=async ()=>{
         setIsMainSelected(!isMainSelected);
         
         if(!isClicked){
-            var sub=await filterSubCategories(props.main_category);
-            setSubs((prevSubs) => [...prevSubs, ...sub]);
-        
-
+            // var sub=await filterSubCategories(props.main_category);
+            // setSubs((prevSubs) => [...prevSubs, ...sub]);
+            getSubCategory();
         }
         setIsClicked(true);
         

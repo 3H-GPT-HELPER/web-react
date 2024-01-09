@@ -6,6 +6,8 @@ const Server_URL = "http://localhost:3002";
 const LoginPage=()=>{
     const [id,setId]=useState("");
     const [password,setPassword]=useState("");
+    const navigate=useNavigate();
+    
     
     const LoginBtn=async()=>{
         console.log(id,password);
@@ -35,7 +37,7 @@ const LoginPage=()=>{
                         localStorage.setItem('id',id)
                         localStorage.setItem('token',json.token);
                         //window.location.replace('http://localhost:3000/category')
-     
+                        navigate("/category");
                     })
                     .catch((error)=>{
                         console.error("error:",error);

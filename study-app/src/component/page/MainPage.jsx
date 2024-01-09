@@ -30,10 +30,10 @@ function MainPage(props){
     const [isLoggedIn,setIsLoggedIn]=useState(false);
 
     useEffect(()=>{
-        // if(localStorage.getItem('token')!==null){
-        //     setIsLogin(true);
-        // }
-        //
+        if(localStorage.getItem('token')!==null){
+            setIsLoggedIn(true);
+        }
+        
         const checkLoginStatus=async()=>{
             try{
               const response=await fetch(Server_URL+"/checkLoginStatus",{
@@ -45,8 +45,8 @@ function MainPage(props){
               })
               const data=await response.json();
               console.log(data.isloggedIn);
-              setIsLoggedIn(data.isLoggedIn);
-           
+              setIsLoggedIn(data.isloggedIn);
+              
               }catch(err){
                 console.log('login status check',err);
               };
@@ -60,11 +60,12 @@ function MainPage(props){
     return(
         <Wrapper>
             <Container>
-                <Card
+                {isLoggedIn && <Card
                 title="categories"
                 onClick={(item)=>{navigate("/category");}}
                 >
-                </Card>
+                </Card>}
+                
                 
                 <Card
                 title="signup"
