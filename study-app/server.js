@@ -113,6 +113,31 @@ app.post("/login",async(req,res)=>{
         res.status(500).json(err);
     }
 })
+//chrome extension connection
+
+//site login 여부 확인
+app.get("/proxy",(req,res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    
+    if(localStorage.getItem('token')!==null){
+        var userId=localStorage.getItem('id')
+        res.json({userId:userId,authenticated:'True'})
+    }
+    else{
+        res.json({authenticated:'False'})
+    }
+    
+})
+
+//get data from chrome extension 
+app.post("/proxy",(req,res)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    console.log(req.body);
+
+    const {question,answer}=req.body;
+    console.log("proxy:",question,answer);
+   
+});
 
 //get 잘되는지 test용 추후에 지우기
 app.get("/api/user",(req,res)=>{
