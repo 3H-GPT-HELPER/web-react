@@ -70,20 +70,14 @@ function MainCategoryBox(props){
                 method:"POST",
                 headers:{
                     "Content-Type":"application/json",
-                    //Authorization:localStorage.getItem("token"),
+                    Authorization:localStorage.getItem("token"),
                 },
                 body: JSON.stringify({
                     main: props.main_category
                 })
             })
             const datas=await res.json();
-            // const categories=[];
-            // datas.forEach((item)=>{
-            //     categories.append(item['name']);
-            // })
-            // console.log(categories);
-            // const categories=data.mainCategories;
-            //setMains((prevMains) => [...prevMains, ...datas]);
+
             setSubs(datas);
             console.log(datas);
             console.log(subs);

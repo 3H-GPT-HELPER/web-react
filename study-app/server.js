@@ -223,15 +223,16 @@ app.get("/getMainCategory",authenticateToken,(req,res)=>{
     
 })
 //사용자가 클릭한 main catogory에 속하는 sub category 가져오는 api
-app.post("/getSubCategory",(req,res)=>{
+app.post("/getSubCategory",authenticateToken,(req,res)=>{
     //cors 에러 사전 차단
     res.header("Access-Control-Allow-Origin", "*");
     const main=req.body.main;
+    const userId=req.user.user;
     console.log("main cate",main);
 
-    const query="SELECT * FROM Subcategory where main_category=?;"
+    const query="SELECT * FROM Subcategory where main_category=? and userId=?;"
 
-    db.query(query,[main],(err,result)=>{
+    db.query(query,[main,userId],(err,result)=>{
         if(err){
             res.status(500).send(err);
         }else{
@@ -244,15 +245,16 @@ app.post("/getSubCategory",(req,res)=>{
 })
 
 //마지막 content detail 가져오는 api
-app.post("/getContent",(req,res)=>{
+app.post("/getContent",authenticateToken,(req,res)=>{
     //cors 에러 사전 차단
     res.header("Access-Control-Allow-Origin", "*");
+    const userId=req.user.user;
     const main=req.body.main;
     const sub=req.body.sub;
 
-    const query="SELECT * FROM Content where main_category=? and sub_category1=?;"
+    const query="SELECT * FROM Content where main_category=? and sub_category1=? and userId=?;"
 
-    db.query(query,[main,sub],(err,result)=>{
+    db.query(query,[main,sub,userId],(err,result)=>{
         if(err){
             res.status(500).send(err);
         }else{
