@@ -8,9 +8,10 @@ const PORT    = 3002; // 포트번호 설정
 const jwt=require('jsonwebtoken');
 const SECRET_KEY='MY-SECRET-KEY';
 
-
 const bcrypt=require('bcrypt');
 const db=require('./server/db');
+
+
 
 let usersLoginStatus={};
 
@@ -168,32 +169,176 @@ app.get("/proxy",(req,res)=>{
     
 })
 
+//python->js
+//const spawn=require('child_process').spawn;
+const {spawn} = require('child_process');
+const cal_similarity_path='./processing/cal_similarity.py';
+const extract_topic_path="./processing/extract_topic.py"
+
+const cal_similarity=(answer,categories)=>{
+    return new Promise((resolve,reject)=>{
+        var newOrOld=""
+        const return_dic=spawn('python',[cal_similarity_path,answer,categories]);
+                return_dic.stdout.on('data',function(data){
+                    newOrOld=data.toString();
+                    resolve(newOrOld);
+                
+                })
+    });
+     
+
+};
+
+const extract_topic=(answer)=>{
+    return new Promise((resolve)=>{
+        var result=""
+        const topics=spawn('python',[extract_topic_path,answer]);
+        topics.stdout.on('data',function(data){
+            result=data.toString();
+            resolve(result)
+        });
+
+    })
+
+};
+
 //get data from chrome extension 
-app.post("/proxy",(req,res)=>{
+app.post("/proxy",async (req,res)=>{
     res.header("Access-Control-Allow-Origin", "*");
     
     try{
         const {question,answer}=req.body;
     
     //preprocessing, topic filtering 추가
-    const main_category="test_main"
-    const sub_category1="test_sub1"
-    const sub_category2="test_sub2"
+    var main_category="test_main"
+    var sub_category1="test_sub1"
+    var sub_category2="test_sub2"
+    
+    console.log("?!?",question);
+    //python->js
+    if(usersLoginStatus[temp_userId]==true){
+        const getUserCategoryQuery="SELECT * FROM Usercategory where userId=?;"
 
-    //UserCategory생성, SubCategory, Content순으로 넣기
+        const getCategory=()=>{
+            return new Promise((resolve,reject)=>{
+                db.query(getUserCategoryQuery,[temp_userId],(err,result)=>{
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(result);
+                            
+                    }
+                });
+                
+            });
+        };
+        
+        const result=await getCategory();
+        const categories=result.map((category)=>(category.name))
+        console.log("before cate",categories);
 
-    //db로 저장
-    const query="INSERT INTO CONTENT (userId,question,answer,main_category,sub_category1,sub_category2) VALUES(?,?,?,?,?,?);"
+        try{
+            const newOrOld=await cal_similarity(answer,categories);
+            console.log("neworOld:",newOrOld);
 
+            const topics=await extract_topic(answer);
+            console.log("topics",topics);
+            var topic_arr=[]
+            topic_arr=topics.split("/")
+                
+                
+            if(newOrOld=="new"){
+                main_category=topic_arr[0]
+                sub_category1=topic_arr[1]
+                sub_category2=topic_arr[2]
 
-    db.query(query,[temp_userId,question,answer,main_category,sub_category1,sub_category2],(err,result)=>{
-        if(err){
-            res.status(500).send(err);
-        }else{
-            res.status(200).json("답변 서버 저장 완료!");
-            console.log("!");
+                console.log("new categories:",main_category,sub_category1,sub_category2);
+
+            }
+            else if(newOrOld.slice(0,6)=="existed"){
+                main_category=newOrOld.substring(7)
+                sub_category1=topic_arr[0]
+                sub_category2=topic_arr[1]
+
+                console.log("existed main category:",main_category,sub_category1,sub_category2);
+
+            }
+            
+
+        }catch(err){
+                console.log("similarity err",err);
         }
-    });
+
+        //UserCategory생성, SubCategory, Content순으로 넣기
+
+        //db로 저장
+        const addUserCategoryQuery="INSERT INTO UserCategory (name,userId) VALUES(?,?);"
+        const addSubCategoryQuery="INSERT INTO SubCategory (main_category,name) VALUES(?,?);"
+        const addContent_query="INSERT INTO CONTENT (userId,question,answer,main_category,sub_category1,sub_category2) VALUES(?,?,?,?,?,?);"
+
+        var isMainDuplicated=false;
+        //이미 존재하는 user category가 있다면 sub추가부터 진행
+        db.query("select *from usercategory where name=?",main_category,(err)=>{
+            if(err){
+                console.log(err);
+            }
+            else{
+                isMainDuplicated=true;
+                console.log("이미 동일한 main category 존재");
+            }
+        
+        })
+
+        if(!isMainDuplicated){
+            //User Category db저장
+            db.query(addUserCategoryQuery,[main_category,temp_userId],(err)=>{
+                if(err){
+                    console.error(err);
+                    //res.status(500).send(err);
+                }else{
+                    console.log("main category 저장 완료")
+                    //res.status(200).json("main category 저장 완료");
+                }
+            })
+
+        }
+
+        //sub cagtegory db저장
+        db.query(addSubCategoryQuery,[main_category,sub_category1],err=>{
+            if(err){
+                //res.status(500).send(err);
+                console.log(err);
+            }else{
+                console.log("sub category1 저장 완료")
+                //res.status(200).json("sub category1 저장 완료");
+            }
+        })
+
+        db.query(addSubCategoryQuery,[main_category,sub_category2],err=>{
+            if(err){
+                //res.status(500).send(err);
+
+            }else{
+                //res.status(200).json("sub category2 저장 완료");
+            }
+        })
+
+
+        //content db에 저장
+        db.query(addContent_query,[temp_userId,question,answer,main_category,sub_category1,sub_category2],(err,result)=>{
+            if(err){
+                //res.status(500).send(err);
+            }else{
+                res.status(200).json("답변 서버 저장 완료!");
+                console.log("답변 서버 저장 완료!");
+            }
+        });
+        
+    }
+    else{
+        console.log("not login");
+    }
+    
 
     }catch(err){
         console.error(err);
@@ -230,15 +375,14 @@ app.post("/getSubCategory",authenticateToken,(req,res)=>{
     const userId=req.user.user;
     console.log("main cate",main);
 
-    const query="SELECT * FROM Subcategory where main_category=? and userId=?;"
+    const query="SELECT * FROM Subcategory where main_category=?;"
 
-    db.query(query,[main,userId],(err,result)=>{
+    db.query(query,[main],(err,result)=>{
         if(err){
             res.status(500).send(err);
         }else{
             res.status(200).json(result);
-            // console.log(result);
-            // res.send(result);
+          
         }
     })
     
@@ -252,15 +396,13 @@ app.post("/getContent",authenticateToken,(req,res)=>{
     const main=req.body.main;
     const sub=req.body.sub;
 
-    const query="SELECT * FROM Content where main_category=? and sub_category1=? and userId=?;"
+    const query="SELECT * FROM Content where main_category=? and sub_category1=? or sub_category2=? and userId=?;"
 
-    db.query(query,[main,sub,userId],(err,result)=>{
+    db.query(query,[main,sub,sub,userId],(err,result)=>{
         if(err){
             res.status(500).send(err);
         }else{
             res.status(200).json(result);
-            // console.log(result);
-            // res.send(result);
         }
     })
     

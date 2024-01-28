@@ -1,9 +1,9 @@
 CREATE TABLE User(
-    `useId` varchar(15) NOT NULL,
+    `userId` varchar(15) NOT NULL,
     `name` varchar(10) NOT NULL,
     `email` varchar(20) NOT NULL,
     `password` varchar(30) NOT NULL,
-    PRIMARY KEY (`useId`)
+    PRIMARY KEY (`userId`)
 );
 
 CREATE TABLE UserCategory(
