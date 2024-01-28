@@ -1,0 +1,20 @@
+.whole_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+ }
+
+.content_container{
+   
+}
+.question_container{
+    display: flex;
+    flex-direction: row;
+}
+
+.answer_container{
+    display: flex;
+    flex-direction: row;
+
+}

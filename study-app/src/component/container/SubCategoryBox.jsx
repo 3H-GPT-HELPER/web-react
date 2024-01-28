@@ -4,17 +4,19 @@ import styled from "styled-components";
 
 const StyledCard=styled.button`
     padding:8px 16px;
+    background-color:white;
     font-size:16px;
     border-white:1px;
     border-radius:8px;
     cursor:pointer;
-    width:"100vw";
-    height:"100vh";
-    padding:"1.5rem";
-    backgroundColor:black;
+    margin-left:10px;
+    margin-top:15px;
+    
     :hover{
         background:grey;
     };
+
+    border-color: white;
     
 `;
 const Wrapper=styled.div`
@@ -43,13 +45,13 @@ function SubCategoryBox(props){
 
     return(
 
-        <Wrapper>
+        <div class="sub_container">
             {props.subs.map((item)=>(
             <StyledCard key={item.id} onClick={()=>selectSubCategory(item.name)}>
             {item.name||"card"}
             </StyledCard>
         ))}
-        </Wrapper>
+        </div>
         
     );
 

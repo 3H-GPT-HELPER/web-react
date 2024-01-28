@@ -6,16 +6,19 @@ const Server_URL = "http://localhost:3002";
 
 const Wrapper=styled.div`
     width:calc(100%-32px);
+    height:100%;
     padding:16px;
     display:flex;
     flex-direction:column;
     align-itmes:center;
     justify-content:center;
-
+    
 `;
 
 const Container=styled.div`
     width:100%;
+    background-color:white;
+    text-align:right;
     &>*{
         :not(:last-child){
             margin-bottom:16px;
@@ -58,34 +61,39 @@ function MainPage(props){
     },[]);
 
     return(
-        <Wrapper>
-            <Container>
-                {isLoggedIn && <Card
-                title="categories"
-                onClick={(item)=>{navigate("/category");}}
-                >
-                </Card>}
-                
-                
-                <Card
-                title="signup"
-                onClick={(item)=>{navigate("/signup");}}
-                >
-                </Card>
-                {isLoggedIn?
-                <Card
-                title="Logout"
-                onClick={(item)=>{navigate("/logout");}}
-                >
-                </Card>:
-                <Card
-                title="Login"
-                onClick={(item)=>{navigate("/login");}}
-                >
-                </Card>}
-            </Container>
-    
-        </Wrapper>
+        <div>
+            <Wrapper>
+                    <Container>
+                        {isLoggedIn && <Card
+                        title="categories"
+                        onClick={(item)=>{navigate("/category");}}
+                        >
+                        </Card>}
+                        
+                        <Card
+                        title="signup"
+                        onClick={(item)=>{navigate("/signup");}}
+                        >
+                        </Card>
+                        {isLoggedIn?
+                        <Card
+                        title="Logout"
+                        onClick={(item)=>{navigate("/logout");}}
+                        >
+                        </Card>:
+                        <Card
+                        title="Login"
+                        onClick={(item)=>{navigate("/login");}}
+                        >
+                        </Card>}
+
+                    
+                    </Container>
+            
+                </Wrapper>  
+
+        </div>
+
     );
 }
 

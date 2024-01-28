@@ -3,13 +3,12 @@ import styled from "styled-components";
 const StyledCard=styled.button`
     padding:8px 16px;
     font-size:16px;
-    border-white:1px;
-    border-radius:8px;
+    border:none;
     cursor:pointer;
     width:"100vw";
     height:"100vh";
     padding:"1.5rem";
-    backgroundColor:lightgrey;
+    background-color:transparent;
     :hover{
         background:grey;
     };

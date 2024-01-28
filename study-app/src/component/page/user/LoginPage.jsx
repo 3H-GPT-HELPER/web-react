@@ -1,7 +1,20 @@
 import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import styled from 'styled-components';
+import Button from '../../ui/Button';
 const Server_URL = "http://localhost:3002";
+
+
+const StyledInput=styled.input`
+    padding:10px;
+    font-size:14px;
+    border-radius:10px;
+    background-color:white;
+    border-color:white;
+    width:10vw;
+    margin:10px;
+`;
 
 const LoginPage=()=>{
     const [id,setId]=useState("");
@@ -53,11 +66,15 @@ const LoginPage=()=>{
 
     return(
         <div>
-            <h1>로그인</h1>
+            <h3>로그인</h3>
             <div>
-                <input type="text" value={id} onChange={(e)=>setId(e.target.value)}></input>
-                <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)}></input>
-                <button type="submit" onClick={LoginBtn}>submit</button>
+                <div class="id">
+                    아이디🐥 <StyledInput value={id} onChange={(e)=>setId(e.target.value)}></StyledInput>
+                    </div>
+                <div className='pw'>
+                    비밀번호 <StyledInput type="password" value={password} onChange={(e)=>setPassword(e.target.value)}></StyledInput>
+                </div>
+                <Button type="submit" onClick={LoginBtn} title="로그인"></Button>
             </div>
         </div>
     );

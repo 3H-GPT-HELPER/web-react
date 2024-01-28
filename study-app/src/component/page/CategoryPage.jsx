@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import data from "../../data.json"
+import "../../css/CategoryPage.css"
 import MainCategoryBox from "../container/MainCategoryBox";
 import {useState} from "react";
 const Server_URL = "http://localhost:3002";
@@ -80,28 +81,19 @@ function CategoryPage(props){
     const user_contents = data.filter((item) => item.userId === userId);
     
     return(
-        <Wrapper>
-            <Container>
-
-                {/* {user_contents.map((content)=>(
-                    <MainCategoryBox
-                    key={content.main_category.id}
-                    main_category={content.main_category}
-                    >
-                    </MainCategoryBox>
-                ))} */}
-
+        <div class="category_container">
                 {mains.map((content)=>(
-                    <MainCategoryBox
-                    key={content.id}
-                    main_category={content.name}
-                    >
-                    </MainCategoryBox>
-                ))}
+                    <div class="item">
+            
+                                <MainCategoryBox
+                                key={content.id}
+                                main_category={content.name}
+                                >
+                                </MainCategoryBox>
+                                </div>))}
+                    
+        </div>
 
-
-            </Container>
-        </Wrapper>
     );
     
 

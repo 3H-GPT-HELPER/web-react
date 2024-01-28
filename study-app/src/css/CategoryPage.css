@@ -1,0 +1,15 @@
+.category_container{
+    width:calc(100%-32px);
+    padding:16px;
+    display:flex;
+    justify-content: center;
+
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    flex-direction: row; 
+   
+};
+
+.item{
+    width:50vw;
+    
+}

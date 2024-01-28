@@ -1,6 +1,74 @@
 import { useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+import "../../css/detailPage.css"
+import styled from "styled-components";
 const Server_URL = "http://localhost:3002";
+
+
+const Styledtitle=styled.div`
+    padding:10px;
+    font-size:14px;
+    border-radius:10px;
+    background-color:#95E0B7;
+    border-color:#95E0B7;
+    cursor:pointer;
+    height:"0px";
+    margin:10px;
+    :hover{
+        background-color:grey;
+    };
+    width:fit-content;
+    height:fit-content;
+    
+`;
+
+const StyledButton=styled.button`
+    padding:10px;
+    font-size:14px;
+    border-radius:10px;
+    background-color:white;
+    border-color:white;
+    cursor:pointer;
+    width:20vw;
+    height:"0px";
+    margin:10px;
+    :hover{
+        background-color:grey;
+    };
+    
+    
+`;
+
+const StyledWhiteTitle=styled.div`
+    padding:10px;
+    font-size:14px;
+    border-radius:10px;
+    background-color:white;
+    border-color:white;
+    cursor:pointer;
+    width:20vw;
+    height:"0px";
+    margin:10px;
+    :hover{
+        background-color:grey;
+    };
+    
+    width:fit-content;
+    
+`;
+
+const StyledAnswer=styled.div`
+    padding:10px;
+    margin:10px;
+    font-size:14px;
+    border-radius:10px;
+    background-color:white;
+    border-color:white;
+    cursor:pointer;
+    width:80vw;
+    
+`;
 
 function DetailPage(props){
     const {main_category,sub_category}=useParams();
@@ -22,13 +90,6 @@ function DetailPage(props){
                     })
                 })
                 const datas=await res.json();
-                // const categories=[];
-                // datas.forEach((item)=>{
-                //     categories.append(item['name']);
-                // })
-                // console.log(categories);
-                // const categories=data.mainCategories;
-                //setMains((prevMains) => [...prevMains, ...datas]);
                 console.log(datas);
                 
                 
@@ -46,12 +107,17 @@ function DetailPage(props){
     
 
     return(
-        <div>
-             <div>detail 도착!main:{main_category} sub:{sub_category}</div><br></br>
-        {contents.map((content)=>(
-            <div>
-                <div>question:{content.question}</div>
-                <div>answer:{content.answer}</div>
+        <div class="whole_container">
+            
+             <div class="category_container">
+                <Styledtitle>main</Styledtitle><StyledButton>{main_category}</StyledButton>
+                <Styledtitle>sub</Styledtitle><StyledButton>{sub_category}</StyledButton>
+            </div>
+
+                {contents.map((content)=>(
+            <div class="content_container">
+                <div class="question_container"><Styledtitle>question</Styledtitle><StyledWhiteTitle>{content.question}</StyledWhiteTitle></div>
+                <div class="answer_container"><Styledtitle> answer+</Styledtitle><StyledAnswer>{content.answer}</StyledAnswer></div>
 
             </div>
   

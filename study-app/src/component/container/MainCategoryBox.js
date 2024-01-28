@@ -2,31 +2,21 @@ import {useState} from "react"
 import styled from "styled-components";
 import data from "../../data.json"
 import SubCategoryBox from "./SubCategoryBox";
+import "../../css/mainCategoryBox.css"
 
 const Server_URL = "http://localhost:3002";
 
-const Wrapper=styled.div`
-    width:calc(100%-32px);
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    align-itmes:center;
-    justify-content:center;
-
-`;
-
 const StyledCard=styled.button`
-    padding:8px 16px;
+    padding:16px;
     font-size:16px;
-    border-white:1px;
-    border-radius:8px;
+    border-radius:10px;
+    background-color:#95E0B7;
+    border-color:#95E0B7;
     cursor:pointer;
-    width:"100vw";
-    height:"100vh";
-    padding:"1.5rem";
-    backgroundColor:blue;
+    height:"0px";
+    margin:10px;
     :hover{
-        background:grey;
+        background-color:grey;
     };
     
 `;
@@ -102,13 +92,15 @@ function MainCategoryBox(props){
     };
     
     return(
-        <Wrapper>
-            <StyledCard onClick={selectMainCategory}>
-        {props.main_category||"card"}
-        </StyledCard>
-        {isMainSelected && <SubCategoryBox main={props.main_category} subs={subs}></SubCategoryBox>}
+        <div class="container">
+            <div class="main_container">
+                <StyledCard onClick={selectMainCategory}>
+                {props.main_category||"card"}
+                </StyledCard>
+            </div>
+            {isMainSelected && <SubCategoryBox main={props.main_category} subs={subs}></SubCategoryBox>}
 
-        </Wrapper>
+        </div>
     
     );
 }
